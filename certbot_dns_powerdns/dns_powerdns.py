@@ -46,7 +46,8 @@ class Authenticator(dns_common.DNSAuthenticator):
             'PowerDNS credentials file',
             {
                 'api-url': 'PowerDNS-compatible API FQDN',
-                'api-key': 'PowerDNS-compatible API key (X-API-Key)'
+                'api-key': 'PowerDNS-compatible API key (X-API-Key)',
+                'delegated': 'Delegated domain hosted on PowerDNS server'
             }
         )
 
@@ -62,6 +63,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         return _PowerDNSLexiconClient(
             self.credentials.conf('api-url'),
             self.credentials.conf('api-key'),
+            self.credentials.conf('delegated'),
             self.ttl
         )
 
@@ -71,11 +73,12 @@ class _PowerDNSLexiconClient(dns_common_lexicon.LexiconClient):
     Encapsulates all communication with the PowerDNS via Lexicon.
     """
 
-    def __init__(self, api_url, api_key, ttl):
+    def __init__(self, api_url, api_key, delegated, ttl):
         super(_PowerDNSLexiconClient, self).__init__()
 
         config = dns_common_lexicon.build_lexicon_config('powerdns', {
             'ttl': ttl,
+            'delegated':delegated,
         }, {
             'auth_token': api_key,
             'pdns_server': api_url,
